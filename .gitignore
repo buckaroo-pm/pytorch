@@ -206,3 +206,10 @@ caffe2.egg-info
 # Visual Studio Code files
 .vscode
 .vs
+
+# Buck
+buck-out/
+.buckd/
+buckaroo/
+BUCKAROO_DEPS
+.buckconfig.local

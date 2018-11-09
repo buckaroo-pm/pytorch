@@ -1,0 +1,11 @@
+[cxx]
+  untracked_headers = warn
+  should_remap_host_platform = true
+  gtest_dep = google.gtest//:gtest
+  ; cudapp = /Developer/NVIDIA/CUDA-9.2/bin/nvcc
+  ; cudapp = /usr/local/opt/llvm/bin/clang++
+  ; cuda = /Developer/NVIDIA/CUDA-9.2/bin/nvcc
+  ; cuda = /usr/local/opt/llvm/bin/clang++
+
+; [repositories]
+  ; google.gtest = buckaroo/official/google/gtest
