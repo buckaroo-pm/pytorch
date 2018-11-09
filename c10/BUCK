@@ -1,0 +1,60 @@
+def merge_dicts(x, y):
+  z = x.copy()
+  z.update(y)
+  return z
+
+build_shared_libs = read_config('c10', 'build_shared_libs', True)
+use_glog = read_config('c10', 'use_glog', False)
+use_gflags = read_config('c10', 'use_gflags', False)
+
+cmake_macros_h = '''
+#ifndef C10_MACROS_CMAKE_MACROS_H_
+#define C10_MACROS_CMAKE_MACROS_H_
+
+// Automatically generated header file for the C10 library.
+// Do not include this file directly. Instead, include c10/macros/Macros.h.
+
+''' + ('#define C10_BUILD_SHARED_LIBS 1' if build_shared_libs else '') + '''
+''' + ('#define C10_USE_GLOG 1' if use_glog else '') + '''
+''' + ('#define C10_USE_GFLAGS 1' if use_gflags else '') + '''
+
+#endif // C10_MACROS_CMAKE_MACROS_H_
+'''
+
+genrule(
+  name = 'cmake_macros', 
+  out = 'cmake_macros.h', 
+  srcs = [
+    'macros/cmake_macros.h.in', 
+  ], 
+  cmd = 'echo "' + cmake_macros_h + '" > $OUT', 
+)
+
+cxx_library(
+  name = 'c10', 
+  header_namespace = 'c10', 
+  exported_headers = merge_dicts({
+    'macros/cmake_macros.h': ':cmake_macros', 
+  }, subdir_glob([
+    ('', '*.h'), 
+    ('', 'util/**/*.h'), 
+    ('', 'macros/**/*.h'), 
+  ])), 
+  srcs = glob([
+    '*.cpp', 
+    'util/**/*.cpp', 
+  ]), 
+  visibility = [
+    'PUBLIC', 
+  ], 
+)
+
+cxx_test(
+  name = 'test', 
+  srcs = glob([
+    'test/**/*.cpp', 
+  ]), 
+  deps = [
+    ':c10', 
+  ], 
+)
